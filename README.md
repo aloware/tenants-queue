@@ -66,13 +66,5 @@ ExampleJob::dispatch()
     ->tries(3);
 ```
 
-## Monitoring
-
-Check out the dashboard to monitor queue partitions, jobs, etc.:
-
-```
-https://your.domain/tenantsqueue/dashboard
-```
-
 ## License
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
