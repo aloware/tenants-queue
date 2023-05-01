@@ -1,17 +1,10 @@
-# Aloware - Fair Queue
+# Aloware - Tenants Queue
 
-Laravel package to provide fair consumption of jobs against multiple partitions.
+Laravel package to provide fair consumption of jobs against multiple tenants.
 
 ## Installation
 ```sh
 composer require aloware/tenants-queue
-```
-
-## Assets
-Run the following command to publish assets and config file:
-
-```sh
-php artisan tenants-queue:publish
 ```
 
 ## Usage
