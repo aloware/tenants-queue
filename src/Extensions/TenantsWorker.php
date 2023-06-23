@@ -18,9 +18,6 @@ class TenantsWorker extends Worker
     protected function getNextJob($connection, $queue)
     {
         $popJobCallback = function ($queue) use ($connection) {
-            info('HAMED_LOG_TEST', [
-                'queue' => $queue,
-            ]);
             return $connection->pop($queue);
         };
 
@@ -31,9 +28,6 @@ class TenantsWorker extends Worker
 
             foreach (explode(',', $queue) as $queue) {
                 if (! is_null($job = $popJobCallback($queue))) {
-                    info('HAMED_LOG_NEXT_JOB', [
-                        'job' => $job
-                    ]);
                     return $job;
                 }
             }
@@ -57,19 +51,9 @@ class TenantsWorker extends Worker
         shuffle($tenantQueues);
 
         foreach ($tenantQueues as $tenantQueue) {
-            info('HAMED_LOG_1', [
-                'tenantQueue' => $tenantQueue,
-                'test' => $connection->getConnectionName()
-            ]);
             $job = $connection->pop($tenantQueue);
-            info('HAMED_LOG_GET_NEXT_JOB_2', [
-                'job' => $job
-            ]);
             if ($job) {
                 $this->removeTenantFromQueueIndexIfLastJob($queue, $tenantQueue);
-                info('HAMED_LOG_GET_NEXT_JOB_3', [
-                    'job' => $job
-                ]);
                 return $job;
             }
         }
