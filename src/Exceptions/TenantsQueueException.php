@@ -2,7 +2,7 @@
 
 namespace Aloware\TenantsQueue\Exceptions;
 
-class TenantsQueueException extends \Exception
+class TenantsQueueException implements \Illuminate\Contracts\Debug\ExceptionHandler
 {
 
 }

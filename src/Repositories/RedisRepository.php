@@ -17,7 +17,6 @@ class RedisRepository implements RepositoryInterface
     public function __construct()
     {
         $this->redis = $this->getConnection();
-        $this->signals_redis = $this->getSignalsConnection();
     }
 
     /**

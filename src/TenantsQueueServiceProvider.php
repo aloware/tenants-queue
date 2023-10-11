@@ -3,8 +3,8 @@
 namespace Aloware\TenantsQueue;
 
 use Aloware\TenantsQueue\Commands\RefreshStats;
-use Aloware\TenantsQueue\Commands\CustomQueueWorker;
 use Aloware\TenantsQueue\Commands\TenantsQueueWorker;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Aloware\TenantsQueue\Extensions\TenantsWorker;
 use Aloware\TenantsQueue\Facades\TenantsQueue;
 use Aloware\TenantsQueue\Repositories\RedisRepository;
@@ -46,7 +46,7 @@ class TenantsQueueServiceProvider extends ServiceProvider
     {
         $this->commands([
             RefreshStats::class,
-            CustomQueueWorker::class,
+            TenantsQueueWorker::class,
         ]);
 
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
