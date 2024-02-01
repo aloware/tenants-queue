@@ -36,13 +36,13 @@ class ExampleJob implements ShouldQueue
 ...
 ```
 
-You can partition your data using `->fairConsume()` at dispatch time
+You can partition your data using `->tenant()` at dispatch time
 and let your queue jobs be consumed fairly among those partitions.
 ```
 ExampleJob::dispatch()
     ->onConnection($connection)
     ->onQueue($queue)
-    ->fairConsume($companyId);
+    ->tenant();
 ```
 
 ### Retries
@@ -62,7 +62,7 @@ the fair queue's `->tries()` chain call.
 ExampleJob::dispatch()
     ->onConnection($connection)
     ->onQueue($queue)
-    ->fairConsume($companyId)
+    ->tenant()
     ->tries(3);
 ```
 
