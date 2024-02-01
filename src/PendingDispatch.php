@@ -22,7 +22,7 @@ class PendingDispatch extends \Illuminate\Foundation\Bus\PendingDispatch
     /**
      * @throws EmptyPartitionNameException
      */
-    public function fairConsume($partition)
+    public function tenant($partition)
     {
         if (empty($partition)) {
             throw new EmptyPartitionNameException();

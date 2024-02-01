@@ -114,14 +114,15 @@ trait FairDispatchable
     /**
      * Set the tenant stamping logic on the jobs.
      *
-     * @param $tenantId
      * @return $this
      */
-    public function fairConsume($tenantId)
+    public function tenant()
     {
         $redisDriver = config('tenants-queue.redis_driver');
         $redis = Redis::connection($redisDriver);
         $tenantsQueuePrefix = config('tenants-queue.prefix');
+        $tenantsSize = config('tenants-queue.tenants_size');
+        $tenantId = rand(0, $tenantsSize);
         $listKeyName = "{$tenantsQueuePrefix}:{$this->queue}";
         $redis->sadd($listKeyName, $tenantId);
         $this->tenantId = $tenantId;

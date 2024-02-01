@@ -68,6 +68,16 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | TenantsQueue Tenants Size
+    |--------------------------------------------------------------------------
+    |
+    | This is the amount of tenants that will be processed.
+    | a random number will be picked from 0 to this number.
+    */
+    'tenants_size' => env('TENANTS_SIZE', 100),
+
+    /*
+    |--------------------------------------------------------------------------
     | TenantsQueue Refresh Stats
     |--------------------------------------------------------------------------
     | TenantsQueue Stats Configurations
