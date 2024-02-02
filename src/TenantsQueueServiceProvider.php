@@ -10,6 +10,7 @@ use Aloware\TenantsQueue\Facades\TenantsQueue;
 use Aloware\TenantsQueue\Repositories\RedisRepository;
 use Aloware\TenantsQueue\Interfaces\RepositoryInterface;
 use Aloware\TenantsQueue\Repositories\RedisKeys;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Facade;
@@ -48,6 +49,8 @@ class TenantsQueueServiceProvider extends ServiceProvider
             RefreshStats::class,
             TenantsQueueWorker::class,
         ]);
+
+        $this->pickJobFromTenants();
 
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
             if(config('tenants-queue.stats.enabled')) {
@@ -93,6 +96,26 @@ class TenantsQueueServiceProvider extends ServiceProvider
                 $isDownForMaintenance,
                 $resetScope
             );
+        });
+    }
+
+    /**
+     * Pick a job from tenants
+     *
+     * @return void
+     */
+    protected function pickJobFromTenants()
+    {
+        $tenants_size = config('tenants-queue.tenants_size');
+        $worker_name = config('horizon.use', 'default');
+        Queue::popUsing($worker_name, function ($pop) use($tenants_size) {
+            $tenants = array_rand(range(1, $tenants_size), $tenants_size / 10);
+            foreach($tenants as $tenant) {
+                if(! is_null($job = $pop($tenant))) {
+                    return $job;
+                }
+            }
+            return;
         });
     }
 }
