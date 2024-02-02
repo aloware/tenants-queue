@@ -17,14 +17,14 @@ TENANTS_QUEUE_REDIS_DB="default"
 TENANTS_QUEUE_KEY_PREFIX="tenants-queue"
 ```
 
-Now, you need to replace `use Dispatchable;` with `use FairDispatchable;`
+Now, you need to replace `use Dispatchable;` with `use TenantDispatchable;`
 in the Job class you need fair consumption functionality.
 ```
 <?php
 
 namespace App\Jobs;
 
-use Aloware\TenantsQueue\FairDispatchable;
+use Aloware\TenantsQueue\TenantDispatchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -32,7 +32,7 @@ use Illuminate\Queue\SerializesModels;
 
 class ExampleJob implements ShouldQueue
 {
-    use FairDispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use TenantDispatchable, InteractsWithQueue, Queueable, SerializesModels;
 ...
 ```
 
