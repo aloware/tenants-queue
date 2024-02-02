@@ -8,6 +8,7 @@ use Illuminate\Support\Fluent;
 
 trait TenantDispatchable
 {
+    public $tenant;
     /**
      * Dispatch the job with the given arguments.
      *
