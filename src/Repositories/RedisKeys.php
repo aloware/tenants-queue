@@ -28,7 +28,7 @@ trait RedisKeys
     private function queueTenantsListKeyName()
     {
         return sprintf(
-            '%s-tenants-%s',
+            '%s-tenants-list',
             $this->tenantsQueueKeyPrefix()
         );
     }

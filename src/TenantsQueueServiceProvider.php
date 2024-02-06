@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\Facade;
 
 class TenantsQueueServiceProvider extends ServiceProvider
 {
-    use RedisRepository;
     /**
      * Register the service provider.
      *
@@ -106,7 +105,7 @@ class TenantsQueueServiceProvider extends ServiceProvider
     protected function pickJobFromTenants()
     {
         $worker_name = config('tenants-queue.default_worker_name', 'default');
-        $tenant = $this->getRandomTenantName();
+        $tenant = TenantsQueue::getRandomTenantName();
         Queue::popUsing($worker_name, function ($pop) use($tenant) {
             if(! is_null($job = $pop($tenant))) {
                 return $job;
