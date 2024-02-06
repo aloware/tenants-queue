@@ -2,8 +2,11 @@
 
 namespace Aloware\TenantsQueue;
 
+use Aloware\TenantsQueue\Repositories\RedisRepository;
+
 class TenantPendingDispatch extends \Illuminate\Foundation\Bus\PendingDispatch
 {
+    use RedisRepository;
     /**
      * Create a new pending job dispatch.
      *
@@ -20,10 +23,9 @@ class TenantPendingDispatch extends \Illuminate\Foundation\Bus\PendingDispatch
      *
      * @return TenantPendingDispatch
      */
-    public function tenant()
+    public function tenant($tenant): TenantPendingDispatch
     {
-        $tenants_size = config('tenants-queue.tenants_size');
-        $tenant = rand(1, $tenants_size);
+        $this->addTenantNameToTheList($tenant);
 
         $this->job->tenant = $tenant;
 
