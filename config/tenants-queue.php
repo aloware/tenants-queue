@@ -24,14 +24,13 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | TenantsQueue Default Queue Name
+    | Tenants Default Worker Name
     |--------------------------------------------------------------------------
     |
-    | When a job goes to tenants-queue without specified queue name, it will go
-    | to this queue name.
+    | This is the default worker name that will be used for tenants-queue.
     |
     */
-    'default_queue_name' => 'default',
+    'default_worker_name' => 'default',
 
     /*
     |--------------------------------------------------------------------------

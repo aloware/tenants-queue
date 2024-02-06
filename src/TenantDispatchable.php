@@ -5,15 +5,18 @@ namespace Aloware\TenantsQueue;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Support\Fluent;
+use Closure;
 
 trait TenantDispatchable
 {
+    use Dispatchable;
+
     public $tenant;
     /**
      * Dispatch the job with the given arguments.
      *
      * @param  mixed  ...$arguments
-     * @return \Illuminate\Foundation\Bus\PendingDispatch
+     * @return TenantPendingDispatch
      */
     public static function dispatch(...$arguments)
     {
@@ -62,52 +65,5 @@ trait TenantDispatchable
         return ! value($boolean)
             ? new TenantPendingDispatch(new static(...$arguments))
             : new Fluent;
-    }
-
-    /**
-     * Dispatch a command to its appropriate handler in the current process.
-     *
-     * Queueable jobs will be dispatched to the "sync" queue.
-     *
-     * @param  mixed  ...$arguments
-     * @return mixed
-     */
-    public static function dispatchSync(...$arguments)
-    {
-        return app(Dispatcher::class)->dispatchSync(new static(...$arguments));
-    }
-
-    /**
-     * Dispatch a command to its appropriate handler in the current process.
-     *
-     * @return mixed
-     *
-     * @deprecated Will be removed in a future Laravel version.
-     */
-    public static function dispatchNow(...$arguments)
-    {
-        return app(Dispatcher::class)->dispatchNow(new static(...$arguments));
-    }
-
-    /**
-     * Dispatch a command to its appropriate handler after the current process.
-     *
-     * @param  mixed  ...$arguments
-     * @return mixed
-     */
-    public static function dispatchAfterResponse(...$arguments)
-    {
-        return self::dispatch(...$arguments)->afterResponse();
-    }
-
-    /**
-     * Set the jobs that should run if this job is successful.
-     *
-     * @param  array  $chain
-     * @return \Illuminate\Foundation\Bus\PendingChain
-     */
-    public static function withChain($chain)
-    {
-        return new PendingChain(static::class, $chain);
     }
 }

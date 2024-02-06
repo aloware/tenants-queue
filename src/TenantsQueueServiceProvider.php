@@ -9,7 +9,6 @@ use Aloware\TenantsQueue\Extensions\TenantsWorker;
 use Aloware\TenantsQueue\Facades\TenantsQueue;
 use Aloware\TenantsQueue\Repositories\RedisRepository;
 use Aloware\TenantsQueue\Interfaces\RepositoryInterface;
-use Aloware\TenantsQueue\Repositories\RedisKeys;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
@@ -17,7 +16,7 @@ use Illuminate\Support\Facades\Facade;
 
 class TenantsQueueServiceProvider extends ServiceProvider
 {
-    use RedisKeys;
+    use RedisRepository;
     /**
      * Register the service provider.
      *
@@ -106,14 +105,11 @@ class TenantsQueueServiceProvider extends ServiceProvider
      */
     protected function pickJobFromTenants()
     {
-        $tenants_size = config('tenants-queue.tenants_size');
-        $worker_name = config('horizon.use', 'default');
-        Queue::popUsing($worker_name, function ($pop) use($tenants_size) {
-            $tenants = array_rand(range(1, $tenants_size), $tenants_size / 10);
-            foreach($tenants as $tenant) {
-                if(! is_null($job = $pop($tenant))) {
-                    return $job;
-                }
+        $worker_name = config('tenants-queue.default_worker_name', 'default');
+        $tenant = $this->getRandomTenantName();
+        Queue::popUsing($worker_name, function ($pop) use($tenant) {
+            if(! is_null($job = $pop($tenant))) {
+                return $job;
             }
             return;
         });
