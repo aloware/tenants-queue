@@ -2,15 +2,12 @@
 
 namespace Aloware\TenantsQueue;
 
-use Aloware\TenantsQueue\Commands\RefreshStats;
-use Aloware\TenantsQueue\Commands\TenantsQueueWorker;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Aloware\TenantsQueue\Extensions\TenantsWorker;
 use Aloware\TenantsQueue\Facades\TenantsQueue;
 use Aloware\TenantsQueue\Repositories\RedisRepository;
 use Aloware\TenantsQueue\Interfaces\RepositoryInterface;
 use Illuminate\Support\Facades\Queue;
-use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Facade;
 
@@ -23,12 +20,6 @@ class TenantsQueueServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->registerTenantsWorker();
-
-        // register TenantsQueueWorker
-        $this->app->singleton(TenantsQueueWorker::class, function ($app) {
-            return new TenantsQueueWorker($app['queue.tenants_worker'], $app['cache.store']);
-        });
         $this->app->singleton(
             RepositoryInterface::class,
             RedisRepository::class
@@ -43,19 +34,7 @@ class TenantsQueueServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->commands([
-            RefreshStats::class,
-            TenantsQueueWorker::class,
-        ]);
-
         $this->pickJobFromTenants();
-
-        $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
-            if(config('tenants-queue.stats.enabled')) {
-                // refresh stats for dashboard
-                $schedule->command(RefreshStats::class)->everyMinute()->withoutOverlapping();
-            }
-        });
     }
 
     /**
