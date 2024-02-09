@@ -84,9 +84,9 @@ class TenantsQueueServiceProvider extends ServiceProvider
     protected function pickJobFromTenants()
     {
         $worker_name = config('tenants-queue.default_worker_name', 'default');
-        $tenant = TenantsQueue::getRandomTenantName();
-        Queue::popUsing($worker_name, function ($pop) use($tenant) {
-            if(! is_null($job = $pop($tenant))) {
+        Queue::popUsing($worker_name, function ($pop) {
+            $tenant = TenantsQueue::getRandomTenantName();
+            if(! is_null($job = $pop($tenant ? 0 : $tenant))) {
                 return $job;
             }
             return;
