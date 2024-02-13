@@ -82,6 +82,18 @@ class RedisRepository implements RepositoryInterface
     }
 
     /**
+     * Remove tenants names list
+     *
+     * @return void
+     */
+    public function removeTenantsNamesList()
+    {
+        $listKeyName = $this->queueTenantsListKeyName();
+
+        $this->redis->del($listKeyName);
+    }
+
+    /**
      * Returns Redis Connection
      *
      * @return \Illuminate\Redis\Connections\Connection

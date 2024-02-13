@@ -2,17 +2,21 @@
 
 namespace Aloware\TenantsQueue;
 
+use Aloware\TenantsQueue\Commands\ClearTenantsNamesList;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Aloware\TenantsQueue\Extensions\TenantsWorker;
 use Aloware\TenantsQueue\Facades\TenantsQueue;
 use Aloware\TenantsQueue\Repositories\RedisRepository;
 use Aloware\TenantsQueue\Interfaces\RepositoryInterface;
+use Aloware\TenantsQueue\Repositories\RedisKeys;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Facade;
 
 class TenantsQueueServiceProvider extends ServiceProvider
 {
+    use RedisKeys;
     /**
      * Register the service provider.
      *
@@ -34,6 +38,8 @@ class TenantsQueueServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->initCommands();
+
         $this->pickJobFromTenants();
     }
 
@@ -86,10 +92,35 @@ class TenantsQueueServiceProvider extends ServiceProvider
         $worker_name = config('tenants-queue.default_worker_name', 'default');
         Queue::popUsing($worker_name, function ($pop) {
             $tenant = TenantsQueue::getRandomTenantName();
-            if(! is_null($job = $pop($tenant ? 0 : $tenant))) {
+            $tenantQueueName = $this->queueKey($tenant);
+            if(! is_null($job = $pop($tenant ? $tenantQueueName : 0))) {
                 return $job;
             }
             return;
+        });
+    }
+
+     /**
+     * Initialize the package commands
+     *
+     * @return void
+     */
+    public function initCommands()
+    {
+        $this->commands([
+            ClearTenantsNamesList::class,
+        ]);
+    }
+
+     /**
+     * Initialize the package schedulers
+     *
+     * @return void
+     */
+    public function initSchedulers()
+    {
+        $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
+            $schedule->command(ClearTenantsNamesList::class)->daily();
         });
     }
 }

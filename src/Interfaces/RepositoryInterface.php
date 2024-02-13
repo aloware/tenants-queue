@@ -17,6 +17,8 @@ interface RepositoryInterface
 
     public function getRandomTenantName();
 
+    public function removeTenantsNamesList();
+
     public function getConnection();
 
 }

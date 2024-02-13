@@ -4,27 +4,25 @@ namespace Aloware\TenantsQueue\Repositories;
 
 trait RedisKeys
 {
-    private function partitionKey($queue, $partition, $prefix = '')
+    /**
+     * Get tenant queue redis key name.
+     *
+     * @return string
+     */
+    private function queueKey($tenant)
     {
         return sprintf(
-            '%s%s:%s:%s',
-            $this->fairQueueKeyPrefix(),
-            $prefix,
-            $queue,
-            $partition
+            '%s:%s:jobs',
+            $this->tenantsQueueKeyPrefix(),
+            $tenant
         );
     }
 
-    private function queueKey($queue, $prefix = '')
-    {
-        return sprintf(
-            '%s%s:%s:*',
-            $this->fairQueueKeyPrefix(),
-            $prefix,
-            $queue
-        );
-    }
-
+    /**
+     * Get tenants list redis key name.
+     *
+     * @return string
+     */
     private function queueTenantsListKeyName()
     {
         return sprintf(
@@ -33,6 +31,11 @@ trait RedisKeys
         );
     }
 
+    /**
+     * Get tenants queue prefix.
+     *
+     * @return string
+     */
     private function tenantsQueueKeyPrefix()
     {
         return config('tenants-queue.key_prefix');
